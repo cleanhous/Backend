@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/teste', (req, res) => {
+app.get('/login', (req, res) => {
   res
     .status(200)
     .send({ mensagem: 'boas-vindas à API' });
