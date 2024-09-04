@@ -1,22 +1,23 @@
 {
   "development": {
     "username": "root",
-    "password": null,
+    "password": "12345678",
     "database": "cleanhouse",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "timezone": "-03:00"
   },
   "test": {
     "username": "root",
-    "password": null,
-    "database": "database_test",
+    "password": "12345678",
+    "database": "cleanhouse",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": null,
-    "database": "database_production",
+    "password": "12345678",
+    "database": "cleanhouse",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
