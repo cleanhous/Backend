@@ -4,12 +4,14 @@ const authContratanteService = new AuthContratanteService()
 
 class AuthContratanteController{
     static async login(req,res){
+
         const {email,senha} = req.body
     
         try{
             const login = await authContratanteService.login({email,senha})
 
             res.status(200).send(login)
+        
         }catch(error){
             res.status(401).send({message: error.message})
         }
@@ -27,3 +29,4 @@ class AuthContratanteController{
 }
 
 module.exports = AuthContratanteController
+
