@@ -4,6 +4,6 @@ const AuthContratanteController = require('../controllers/authContratanteControl
 const router = Router()
 
 router
-    .post('/auth-contratantes', AuthContratanteController.login)
-    .post('/register-contratantes', AuthContratanteController.cadastrar)
+    .post('/login/contratantes', AuthContratanteController.login)
+    .post('/cadastro/contratantes', AuthContratanteController.cadastrar)
 module.exports = router

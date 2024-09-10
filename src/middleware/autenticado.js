@@ -7,7 +7,7 @@ module.exports = async(req, res, next) =>{
     if(!token){
         return res.status(401).send('Acess token não informado')
     }
-
+    
     const [, acessToken] = token.split(' ')
 
     try{
