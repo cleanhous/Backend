@@ -16,7 +16,6 @@ class AuthPrestadorService{
         if (!prestador) {
             throw new Error('Usuário não cadastrado');
         }
-
         const senhasIguais = await compare(dto.senha, prestador.senha);
 
         if (!senhasIguais) {
@@ -53,7 +52,7 @@ class AuthPrestadorService{
 
             const [result] = await db.query(
                 `INSERT INTO prestadores 
-                (id, nome, email, senha, uf, cidade, cep, rua, numero, complemento, createdAt, updatedAt) 
+               (id, nome, email, senha, uf, cidade, logradouro, cep, numero, complemento, createdAt, updatedAt)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     uuid.v4(),
@@ -62,16 +61,15 @@ class AuthPrestadorService{
                     senhaHash,
                     dto.uf,
                     dto.cidade,
+                    dto.logradouro,
                     dto.cep,
-                    dto.rua,
                     dto.numero,
                     dto.complemento,
                     now,
-                    now  
+                    now 
                 ]
-            )
-
-            return result;
+            );
+            return result
         } catch (error) {
             console.error('Erro ao cadastrar prestador:', error);
             throw new Error('Erro ao cadastrar usuário');
