@@ -24,6 +24,9 @@ $ git clone https://github.com/JoaopedroHolanda/projeto-clean-house.git
 # Install the dependencies
 $ npm install
 
+# executar
+$ npm run dev
+
 ```bash
 $ npx sequelize-cli model:create --name contratantes --attributes nome:string,email:string,senha:string,nota:float,UF:string,cidade:string,cep:string,rua:string,numero:string,complemento:string
 
