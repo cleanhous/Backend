@@ -1,244 +1,240 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "API de Autenticação de Contratantes e Prestadores",
-      "description": "API para cadastro e autenticação de contratantes e prestadores de serviços.",
-      "version": "1.0.0"
-    },
-    "servers": [
-      {
-        "url": "http://localhost:3000",
-        "description": "Servidor local"
-      }
-    ],
-    "paths": {
-      "/login/contratantes": {
-        "post": {
-          "summary": "Login de contratante",
-          "tags": ["Autenticação Contratantes"],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "email": {
-                      "type": "string",
-                      "example": "contratante@example.com"
-                    },
-                    "senha": {
-                      "type": "string",
-                      "example": "senha123"
-                    }
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AuthClienteService API",
+    "description": "API para autenticação, cadastro e recuperação de senha de clientes.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Login do cliente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "cliente@example.com"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "example": "senha123"
                   }
                 }
               }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Login realizado com sucesso",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "acessToken": {
-                        "type": "string",
-                        "example": "token_jwt_aqui"
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "Usuário ou senha inválido"
             }
           }
-        }
-      },
-      "/cadastro/contratantes": {
-        "post": {
-          "summary": "Cadastro de contratante",
-          "tags": ["Autenticação Contratantes"],
-          "requestBody": {
-            "required": true,
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "nome": {
+                    "acessToken": {
                       "type": "string",
-                      "example": "João Silva"
-                    },
-                    "email": {
-                      "type": "string",
-                      "example": "contratante@example.com"
-                    },
-                    "senha": {
-                      "type": "string",
-                      "example": "senha123"
-                    },
-                    "uf": {
-                      "type": "string",
-                      "example": "SP"
-                    },
-                    "cidade": {
-                      "type": "string",
-                      "example": "São Paulo"
-                    },
-                    "cep": {
-                      "type": "string",
-                      "example": "01000-000"
-                    },
-                    "rua": {
-                      "type": "string",
-                      "example": "Rua Exemplo"
-                    },
-                    "numero": {
-                      "type": "string",
-                      "example": "123"
-                    },
-                    "complemento": {
-                      "type": "string",
-                      "example": "Apto 101"
+                      "example": "jwt.token.here"
                     }
                   }
                 }
               }
             }
           },
-          "responses": {
-            "201": {
-              "description": "Contratante cadastrado com sucesso"
-            },
-            "400": {
-              "description": "Erro no cadastro"
-            }
-          }
-        }
-      },
-      "/login/prestadores": {
-        "post": {
-          "summary": "Login de prestador",
-          "tags": ["Autenticação Prestadores"],
-          "requestBody": {
-            "required": true,
+          "401": {
+            "description": "Credenciais inválidas",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "email": {
+                    "message": {
                       "type": "string",
-                      "example": "prestador@example.com"
-                    },
-                    "senha": {
-                      "type": "string",
-                      "example": "senha123"
+                      "example": "Usuário ou senha inválido"
                     }
                   }
                 }
               }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Login realizado com sucesso",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "acessToken": {
-                        "type": "string",
-                        "example": "token_jwt_aqui"
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "Usuário ou senha inválido"
-            }
-          }
-        }
-      },
-      "/cadastro/prestadores": {
-        "post": {
-          "summary": "Cadastro de prestador",
-          "tags": ["Autenticação Prestadores"],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "nome": {
-                      "type": "string",
-                      "example": "Maria Souza"
-                    },
-                    "email": {
-                      "type": "string",
-                      "example": "prestador@example.com"
-                    },
-                    "senha": {
-                      "type": "string",
-                      "example": "senha123"
-                    },
-                    "uf": {
-                      "type": "string",
-                      "example": "RJ"
-                    },
-                    "cidade": {
-                      "type": "string",
-                      "example": "Rio de Janeiro"
-                    },
-                    "cep": {
-                      "type": "string",
-                      "example": "20000-000"
-                    },
-                    "rua": {
-                      "type": "string",
-                      "example": "Rua Prestador"
-                    },
-                    "numero": {
-                      "type": "string",
-                      "example": "456"
-                    },
-                    "complemento": {
-                      "type": "string",
-                      "example": "Casa 2"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Prestador cadastrado com sucesso"
-            },
-            "400": {
-              "description": "Erro no cadastro"
             }
           }
         }
       }
     },
-    "components": {
-      "securitySchemes": {
-        "bearerAuth": {
-          "type": "http",
-          "scheme": "bearer",
-          "bearerFormat": "JWT"
+    "/cadastro": {
+      "post": {
+        "summary": "Cadastrar novo cliente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "example": "João Pedro"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "cliente@example.com"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "example": "senha123"
+                  },
+                  "telefone": {
+                    "type": "string",
+                    "example": "(11)99999-9999"
+                  },
+                  "uf": {
+                    "type": "string",
+                    "example": "SP"
+                  },
+                  "cidade": {
+                    "type": "string",
+                    "example": "São Paulo"
+                  },
+                  "logradouro": {
+                    "type": "string",
+                    "example": "Rua Exemplo"
+                  },
+                  "cep": {
+                    "type": "string",
+                    "example": "12345-678"
+                  },
+                  "numero": {
+                    "type": "string",
+                    "example": "123"
+                  },
+                  "complemento": {
+                    "type": "string",
+                    "example": "Apto 101"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente cadastrado com sucesso"
+          },
+          "400": {
+            "description": "Erro ao cadastrar cliente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Cliente já cadastrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/forgot-password": {
+      "post": {
+        "summary": "Solicitar redefinição de senha",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "cliente@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email de redefinição enviado com sucesso"
+          },
+          "400": {
+            "description": "Erro ao solicitar redefinição de senha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Usuário não encontrado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "summary": "Redefinir senha do cliente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "example": "jwt.token.here"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "example": "novaSenha123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Senha redefinida com sucesso"
+          },
+          "400": {
+            "description": "Erro ao redefinir senha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Token inválido ou expirado"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
   }
-  
+}

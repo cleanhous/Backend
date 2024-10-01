@@ -5,7 +5,7 @@ const db = require('../db/dbConnection');
 const {sign}= require('jsonwebtoken')
 const jsonSecret = require("../config/jsonSecret")
 const nodemailer = require('nodemailer');
-
+require('dotenv').config()
 class AuthClienteService{
     async login(dto) {
         const [rows] = await db.query(
@@ -53,13 +53,14 @@ class AuthClienteService{
         try {
             const [result] = await db.query(
                 `INSERT INTO clientes 
-               (id, nome, email, senha, uf, cidade, logradouro, cep, numero, complemento, createdAt, updatedAt)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+               (id, nome, email, senha,telefone, uf, cidade, logradouro, cep, numero, complemento, createdAt, updatedAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     uuid.v4(),
                     dto.nome,
                     dto.email,
                     senhaHash,
+                    dto.telefone,
                     dto.uf,
                     dto.cidade,
                     dto.logradouro,
@@ -103,22 +104,21 @@ class AuthClienteService{
             port: 587,
             secure: false,
             auth: {
-                user: '', // substitua pelo seu email
-                pass: '', // substitua pela sua senha
+                user: "cleanhouseltda@hotmail.com", // substitua pelo seu email
+                pass:"", // substitua pela sua senha
             },
         });
     
         // Enviar email para o usuário
         await transporter.sendMail({
-            from: '"Clean House" <>',
-            to: cliente.email,
+            from: '"Clean House" <cleanhouseltda@hotmail.com>',
+            to: "joaopedrodesantanaholanda9@gmail.com",
             subject: 'Redefinição de Senha',
             text: `Olá, clique no link para redefinir sua senha: ${resetLink}`,
         });
     
         return { message: 'Email de redefinição de senha enviado com sucesso!' };
     }
-
     async resetPassword(token, novaSenha) {
         // Verificar se o token é válido
         let decoded;

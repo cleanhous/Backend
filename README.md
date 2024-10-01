@@ -27,10 +27,7 @@ $ npm install
 # executar
 $ npm run dev
 
-```bash
-$ npx sequelize-cli model:create --name contratantes --attributes nome:string,email:string,senha:string,nota:float,UF:string,cidade:string,cep:string,rua:string,numero:string,complemento:string
+```
 
-# Instalando o Ngrok
-$./ngrok config add-authtoken (Teu token)
-$./ngrok http 3000
+
 

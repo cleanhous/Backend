@@ -16,11 +16,11 @@ class AuthClienteController{
             res.status(401).send({message: error.message})
         }
     }
-    
+
     static async cadastrar(req,res){
-        const {nome,email,senha,uf,cidade,logradouro,cep,numero,complemento} = req.body
+        const {nome,email,senha,telefone,uf,cidade,logradouro,cep,numero,complemento} = req.body
         try{
-            const cliente = await authClienteService.cadastrar({nome,email,senha,uf,cidade,logradouro,cep,numero,complemento})
+            const cliente = await authClienteService.cadastrar({nome,email,senha,telefone,uf,cidade,logradouro,cep,numero,complemento})
             res.status(201).send(cliente)
         }catch (error) {
             res.status(400).send({message: error.message})
@@ -29,7 +29,7 @@ class AuthClienteController{
 
     static async forgotPassword(req, res) {
         const { email } = req.body;
-        console.log('Recebido:', req.body);  
+    
 
         if (!email) {
             return res.status(400).send({ message: 'Email não fornecido' });
