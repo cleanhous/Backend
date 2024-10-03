@@ -1,4 +1,4 @@
-const db = require('../db/dbConnection');
+const db = require('../db/dbConnection')
 const uuid = require('uuid')
 
 
@@ -21,21 +21,46 @@ class ServicoService{
             throw new Error("Serviço já cadastrado")
         }
 
-      try{
         const [result] = await db.query(
-            `INSERT INTO servicos (id,titulo,descricao) VALUES (?,?,?)`,
+            `INSERT INTO servicos (id,titulo) VALUES (?,?)`,
             [
                 uuid.v4(),
                 dto.titulo,
-                dto.descricao
             ]
         )
         return result
-      }catch(error){
-        console.error('Erro ao cadastrar cliente:', error);
-        throw new Error('Erro ao cadastrar serviço');
-      }
     }
+
+    async buscaServicoPorId(id){
+        const [rows] = await db.query(
+            "SELECT * FROM servicos WHERE id = ?",[id]
+        )
+
+        const servico = rows[0]
+
+        if(!servico){
+            throw new Error("Serviço não cadastrado")
+        }
+
+        return servico
+    }
+
+    async excluiServico(id){
+        const [rows] = await db.query(
+            "SELECT * FROM servicos WHERE id = ?",[id]
+        )
+
+        const servico = rows[0]
+
+        if(!servico){
+            throw new Error("Serviço não cadastrado")
+        }
+
+        await db.query(
+            "DELETE FROM servicos WHERE id = ?", [id]
+        )
+    }
+
 }
 
 module.exports = ServicoService

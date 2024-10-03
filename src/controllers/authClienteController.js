@@ -13,14 +13,14 @@ class AuthClienteController{
             res.status(200).send(login)
         
         }catch(error){
-            res.status(401).send({message: error.message})
+            res.status(401).json({message: error.message})
         }
     }
 
     static async cadastrar(req,res){
-        const {nome,email,senha,telefone,uf,cidade,logradouro,cep,numero,complemento} = req.body
+        const {nome,email,cpf,senha,telefone,uf,cidade,logradouro,cep,numero,complemento} = req.body
         try{
-            const cliente = await authClienteService.cadastrar({nome,email,senha,telefone,uf,cidade,logradouro,cep,numero,complemento})
+            const cliente = await authClienteService.cadastrar({nome,email,cpf,senha,telefone,uf,cidade,logradouro,cep,numero,complemento})
             res.status(201).send(cliente)
         }catch (error) {
             res.status(400).send({message: error.message})

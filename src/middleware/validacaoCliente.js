@@ -5,10 +5,14 @@ const validaCliente = [
         .notEmpty().withMessage("Campo 'nome' é obrigatório."),
     body('email')
         .isEmail().withMessage("Campo 'email' deve ser um e-mail válido."),
+    body('cpf')
+        .notEmpty().withMessage("Campo 'cpf' é obrigatório."),
     body('senha')
-        .isLength({ min: 6 }).withMessage("Campo 'senha' deve ter no mínimo 6 caracteres."),
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/)
+        .withMessage("A senha deve ter no mínimo 6 caracteres, incluindo uma letra maiúscula, uma letra minúscula, um número e um caractere especial."),
     body('telefone')
-        .notEmpty().withMessage("Campo 'telefone' é obrigatório."),
+        .matches(/^(\(?[0-9]{2}\)?)? ?([0-9]{4,5})-?([0-9]{4})$/gm)
+        .withMessage("Campo 'telefone' deve ser válido no formato (99)99999-9999 ou 99999-9999."),
     body('uf')
         .notEmpty().withMessage("Campo 'uf' é obrigatório."),
     body('cidade')
@@ -30,6 +34,5 @@ const validaCliente = [
         }
         next();
     }
-];
-
+]
 module.exports = validaCliente;

@@ -3,8 +3,7 @@ const { body, validationResult } = require('express-validator');
 const validaServico = [
     body('titulo')
         .notEmpty().withMessage("Campo 'titulo' é obrigatório."),
-    body('descricao')
-        .notEmpty().withMessage("Campo 'descricao' é obrigatório."),
+    
 
     (req, res, next) => {
         const errors = validationResult(req);

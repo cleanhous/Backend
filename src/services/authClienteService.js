@@ -6,6 +6,7 @@ const {sign}= require('jsonwebtoken')
 const jsonSecret = require("../config/jsonSecret")
 const nodemailer = require('nodemailer');
 require('dotenv').config()
+
 class AuthClienteService{
     async login(dto) {
         const [rows] = await db.query(
@@ -40,9 +41,19 @@ class AuthClienteService{
             'SELECT email FROM clientes WHERE email = ?',
             [dto.email]
         );
-        const cliente = rows[0];
+        const clienteComEmail = rows[0];
 
-        if (cliente) {
+        if (clienteComEmail) {
+            throw new Error('Cliente já cadastrado');
+        }
+
+        const [linhas] = await db.query(
+            "SELECT cpf FROM clientes WHERE cpf = ?", [dto.cpf]
+        )
+
+        const clienteComCpf = linhas[0]
+
+        if(clienteComCpf){
             throw new Error('Cliente já cadastrado');
         }
 
@@ -50,15 +61,15 @@ class AuthClienteService{
 
         const now = new Date();
 
-        try {
             const [result] = await db.query(
-                `INSERT INTO clientes 
-               (id, nome, email, senha,telefone, uf, cidade, logradouro, cep, numero, complemento, createdAt, updatedAt)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO clientes
+               (id, nome, email,cpf,senha,telefone, uf, cidade, logradouro, cep, numero, complemento, createdAt, updatedAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     uuid.v4(),
                     dto.nome,
                     dto.email,
+                    dto.cpf,
                     senhaHash,
                     dto.telefone,
                     dto.uf,
@@ -70,12 +81,8 @@ class AuthClienteService{
                     now,
                     now 
                 ]
-            );
+            )
             return result
-        } catch (error) {
-            console.error('Erro ao cadastrar cliente:', error);
-            throw new Error('Erro ao cadastrar usuário');
-        }
     }
 
     async forgotPassword(email) {
@@ -104,8 +111,8 @@ class AuthClienteService{
             port: 587,
             secure: false,
             auth: {
-                user: "cleanhouseltda@hotmail.com", // substitua pelo seu email
-                pass:"", // substitua pela sua senha
+                user: process.env.USER, // substitua pelo seu email
+                pass:process.env.PASS, // substitua pela sua senha
             },
         });
     
