@@ -35,4 +35,5 @@ const validaCliente = [
         next();
     }
 ]
+
 module.exports = validaCliente;

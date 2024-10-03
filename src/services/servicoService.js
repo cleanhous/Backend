@@ -45,6 +45,7 @@ class ServicoService{
         return servico
     }
 
+    
     async excluiServico(id){
         const [rows] = await db.query(
             "SELECT * FROM servicos WHERE id = ?",[id]
