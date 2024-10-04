@@ -41,22 +41,33 @@ const createCategoriasTable = `
 `;
 
 const createPrestadoresTable = `
-  CREATE TABLE IF NOT EXISTS prestadores (
-    id CHAR(36) PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    cpf VARCHAR(14) NOT NULL,
-    senha VARCHAR(255) NOT NULL,
+ CREATE TABLE prestadores(
+	id CHAR(36) PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	cpf VARCHAR(14) NOT NULL,
+	senha VARCHAR(255) NOT NULL,
     telefone VARCHAR(14) NOT NULL,
-    nota DECIMAL(4,2),
+	nota DECIMAL(3, 2) DEFAULT 5.00,
     UF VARCHAR(2),
     cidade VARCHAR(45),
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    id_categoria CHAR(36),
-    CONSTRAINT fk_id_categoria FOREIGN KEY (id_categoria) REFERENCES categorias(id) ON DELETE SET NULL
-  );
+    id_especialidade CHAR(36),
+	CONSTRAINT fk_id_especialidade FOREIGN KEY (id_especialidade) REFERENCES especialidades(id)
+);
 `;
+
+const createEspecialidadesTable = `
+create table especialidades(
+	id char(36) primary key,
+    titulo varchar(60),
+    descricao varchar(255),
+    preco decimal (7,3),
+     id_servico CHAR(36),
+	CONSTRAINT fk_id_servico FOREIGN KEY (id_servico) REFERENCES servicos(id)
+);
+`
 
 // Executar as queries separadamente
 connection.query(createClientesTable, (err, results) => {
