@@ -13,6 +13,6 @@ const validaServico = [
         }
         next();
     }
-];
+]
 
 module.exports = validaServico;

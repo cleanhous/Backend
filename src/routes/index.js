@@ -9,9 +9,9 @@ module.exports = app => {
     app.use(
       bodyParser.json(),
       authCliente,
+      prestador,
       autenticado,
       servico,
-      cliente,
-      prestador
+      cliente
     )
   }
