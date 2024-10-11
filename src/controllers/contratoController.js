@@ -14,7 +14,6 @@ class ContratoController {
             res.status(500).json({ error: 'Erro ao buscar datas ocupadas.' });
         }
     }
-
     static async criarContrato(req, res) {
         const clienteId = req.usuarioId;
         const {prestadorId, dataInicio, dataFim, observacao } = req.body
