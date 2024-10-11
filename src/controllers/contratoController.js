@@ -1,4 +1,6 @@
-const ServicoService = require('../services/contratoService');
+const ContratoService = require('../services/contratoService');
+
+const contratoService = new ContratoService()
 
 class ContratoController {
     // Método estático para obter datas ocupadas de um prestador
@@ -6,24 +8,28 @@ class ContratoController {
         const { prestadorId } = req.params;
 
         try {
-            const datasOcupadas = await ServicoService.obterDatasOcupadas(prestadorId);
+            const datasOcupadas = await contratoService.obterDatasOcupadas(prestadorId);
             res.json({ datasOcupadas });
         } catch (error) {
             res.status(500).json({ error: 'Erro ao buscar datas ocupadas.' });
         }
     }
 
-    // Método estático para criar um novo contrato
     static async criarContrato(req, res) {
-        const { clienteId, prestadorId, dataInicio, dataFim } = req.body;
+        const clienteId = req.usuarioId;
 
+        const {prestadorId, dataInicio, dataFim, observacao } = req.body
+    
         try {
-            const contrato = await ServicoService.criarContrato(clienteId, prestadorId, dataInicio, dataFim);
+            // Verifica se o prestador está disponível
+            const contrato = await contratoService.criarContrato(clienteId, prestadorId, dataInicio, dataFim, observacao);
+            console.log('Prestador ID recebido:', prestadorId);
             res.status(201).json({ message: 'Contrato criado com sucesso.', contrato });
+            console.log(prestadorId)
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
-    }
+    }    
 }
 
 module.exports = ContratoController;

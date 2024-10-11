@@ -1,9 +1,5 @@
-const { Console } = require('console');
 const mysql = require('mysql2');
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
-
-
-
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') })
 
 const connection = mysql.createConnection({
   host: process.env.HOST,
@@ -56,7 +52,7 @@ const createPrestadoresTable = `
     id_especialidade CHAR(36),
 	CONSTRAINT fk_id_especialidade FOREIGN KEY (id_especialidade) REFERENCES especialidades(id)
 );
-`;
+`
 
 const createEspecialidadesTable = `
 create table especialidades(
@@ -69,7 +65,7 @@ create table especialidades(
 );
 `
 
-// Executar as queries separadamente
+
 connection.query(createClientesTable, (err, results) => {
   if (err) {
     console.error('Erro ao criar a tabela clientes:', err);

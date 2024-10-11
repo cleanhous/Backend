@@ -1,9 +1,11 @@
-const db = require('../db/dbConnection');
+const moment = require('moment')
+const db = require('../db/dbConnection')
+const uuid = require('uuid')
 
 class contratoService {
     static async obterDatasOcupadas(prestadorId) {
         try {
-            const [rows] = await pool.query(`
+            const [rows] = await db.query(`
                 SELECT data_inicio, data_fim FROM contratos 
                 WHERE prestador_id = ?`, 
                 [prestadorId]
@@ -17,10 +19,10 @@ class contratoService {
             throw new Error('Erro ao buscar datas ocupadas.');
         }
     }
-
+    
     static async verificarDisponibilidade(prestadorId, dataInicio, dataFim) {
         try {
-            const [rows] = await pool.query(`
+            const [rows] = await db.query(`
                 SELECT COUNT(*) as total FROM contratos 
                 WHERE prestador_id = ? 
                 AND (? BETWEEN data_inicio AND data_fim 
@@ -33,23 +35,19 @@ class contratoService {
         }
     }
 
-    static async criarContrato(clienteId, prestadorId, dataInicio, dataFim) {
-        const disponivel = await this.verificarDisponibilidade(prestadorId, dataInicio, dataFim);
-
-        if (!disponivel) {
-            throw new Error('Prestador indisponível para estas datas.');
-        }
-
+    async criarContrato(clienteId, prestadorId, dataInicio, dataFim, observacao) {
         try {
-            // Inserir o contrato no banco de dados
-            const [result] = await pool.query(`
-                INSERT INTO contratos (cliente_id, prestador_id, data_inicio, data_fim, status)
-                VALUES (?, ?, ?, ?, 'Confirmado')
-            `, [clienteId, prestadorId, dataInicio, dataFim]);
-
-            return { id: result.insertId, clienteId, prestadorId, dataInicio, dataFim, status: 'Confirmado' };
+            const dataInicioFormatted = moment(dataInicio).format('YYYY-MM-DD HH:mm:ss');
+            const dataFimFormatted = moment(dataFim).format('YYYY-MM-DD HH:mm:ss');
+            // Insere o contrato no banco de dados
+            const [result] = await db.query(`
+                INSERT INTO contratos (id, id_cliente, id_prestador, data_inicio, data_fim, observacao)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [uuid.v4(), clienteId, prestadorId, dataInicioFormatted, dataFimFormatted, observacao]);
+            console.log('Prestador ID recebido:', prestadorId);
+            return result
         } catch (error) {
-            throw new Error('Erro ao criar contrato.');
+            throw new Error(error.message);
         }
     }
 }

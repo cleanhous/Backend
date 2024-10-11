@@ -26,7 +26,7 @@ class ClienteService{
         }
 
         const {email,senha, telefone, cep, uf, cidade, logradouro,numero, complemento} = dadosAtualizados
-
+        
         const clienteAtualizado = await db.query(
             `UPDATE clientes SET email = ?, senha =?, telefone=?, cep=?, uf=?, cidade=?, logradouro=?, numero=?,complemento=?, updatedAt = NOW() WHERE id = ?`,
             [email || cliente.email,senha||cliente.senha, telefone || cliente.telefone, cep||cliente.cep, uf||cliente.uf, cidade||cliente.cidade, logradouro||cliente.logradouro,numero|| cliente.numero,complemento||cliente.complemento, id]
