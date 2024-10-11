@@ -3,6 +3,7 @@ const db = require('../db/dbConnection')
 const uuid = require('uuid')
 
 class contratoService {
+
     static async obterDatasOcupadas(prestadorId) {
         try {
             const [rows] = await db.query(`
@@ -39,7 +40,7 @@ class contratoService {
         try {
             const dataInicioFormatted = moment(dataInicio).format('YYYY-MM-DD HH:mm:ss');
             const dataFimFormatted = moment(dataFim).format('YYYY-MM-DD HH:mm:ss');
-            // Insere o contrato no banco de dados
+
             const [result] = await db.query(`
                 INSERT INTO contratos (id, id_cliente, id_prestador, data_inicio, data_fim, observacao)
                 VALUES (?, ?, ?, ?, ?, ?)
@@ -50,6 +51,20 @@ class contratoService {
             throw new Error(error.message);
         }
     }
+
+    async buscaContratoClientes(clienteId) {
+        try {
+          const [result] = await db.query(`
+            SELECT p.nome, c.data_inicio, c.data_fim, c.observacao 
+            FROM contratos c
+            INNER JOIN prestadores p ON p.id = c.id_prestador
+            WHERE c.id_cliente = ?
+          `, [clienteId]); // Usando o clienteId como filtro
+          return result;
+        } catch (error) {
+          throw new Error(error.message);
+        }
+      }
 }
 
 module.exports = contratoService;

@@ -15,6 +15,5 @@ module.exports = app => {
       servico,
       cliente,
       contrato
-      
     )
   }
