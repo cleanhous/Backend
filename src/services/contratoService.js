@@ -1,7 +1,8 @@
 const db = require('../db/dbConnection');
 
 class contratoService {
-    static async obterDatasOcupadas(prestadorId) {
+
+    async obterDatasOcupadas(prestadorId) {
         try {
             const [rows] = await pool.query(`
                 SELECT data_inicio, data_fim FROM contratos 
@@ -17,41 +18,62 @@ class contratoService {
             throw new Error('Erro ao buscar datas ocupadas.');
         }
     }
-
-    static async verificarDisponibilidade(prestadorId, dataInicio, dataFim) {
+    
+    async verificarDisponibilidade(prestadorId, dataInicio, dataFim) {
         try {
             const [rows] = await pool.query(`
                 SELECT COUNT(*) as total FROM contratos 
                 WHERE prestador_id = ? 
-                AND (? BETWEEN data_inicio AND data_fim 
-                OR ? BETWEEN data_inicio AND data_fim)
-            `, [prestadorId, dataInicio, dataFim]);
-
-            return rows[0].total === 0;
+                AND (
+                    (data_inicio <= ? AND data_fim >= ?) OR
+                    (data_inicio <= ? AND data_fim >= ?) OR
+                    (? <= data_inicio AND ? >= data_fim)
+                )
+            `, [prestadorId, dataFim, dataInicio, dataFim, dataInicio, dataInicio, dataFim]);
+    
+            return rows[0].total === 0; // Se o total for 0, o prestador está disponível
         } catch (error) {
             throw new Error('Erro ao verificar disponibilidade.');
         }
     }
 
-    static async criarContrato(clienteId, prestadorId, dataInicio, dataFim) {
-        const disponivel = await this.verificarDisponibilidade(prestadorId, dataInicio, dataFim);
-
-        if (!disponivel) {
-            throw new Error('Prestador indisponível para estas datas.');
-        }
-
+    async criarContrato(clienteId, prestadorId, dataInicio, dataFim, observacao) {
         try {
-            // Inserir o contrato no banco de dados
-            const [result] = await pool.query(`
-                INSERT INTO contratos (cliente_id, prestador_id, data_inicio, data_fim, status)
-                VALUES (?, ?, ?, ?, 'Confirmado')
-            `, [clienteId, prestadorId, dataInicio, dataFim]);
-
-            return { id: result.insertId, clienteId, prestadorId, dataInicio, dataFim, status: 'Confirmado' };
+            
+            const dataInicioFormatted = moment(dataInicio).format('YYYY-MM-DD HH:mm:ss');
+            const dataFimFormatted = moment(dataFim).format('YYYY-MM-DD HH:mm:ss');
+    
+            
+            const disponivel = await contratoService.verificarDisponibilidade(prestadorId, dataInicioFormatted, dataFimFormatted);
+            if (!disponivel) {
+                throw new Error('O prestador já possui um contrato nas datas solicitadas.');
+            }
+    
+            
+            const [result] = await db.query(`
+                INSERT INTO contratos (id, id_cliente, id_prestador, data_inicio, data_fim, observacao)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [uuid.v4(), clienteId, prestadorId, dataInicioFormatted, dataFimFormatted, observacao]);
+    
+            return result;
         } catch (error) {
             throw new Error('Erro ao criar contrato.');
         }
     }
+
+    async buscaContratoClientes(clienteId) {
+        try {
+          const [result] = await db.query(`
+            SELECT p.nome, c.data_inicio, c.data_fim, c.observacao 
+            FROM contratos c
+            INNER JOIN prestadores p ON p.id = c.id_prestador
+            WHERE c.id_cliente = ?
+          `, [clienteId]); 
+          return result;
+        } catch (error) {
+          throw new Error(error.message);
+        }
+      }
 }
 
 module.exports = contratoService;
