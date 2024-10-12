@@ -8,7 +8,6 @@ Este projeto tem o objetivo de apresentar uma solução simples, eficaz e tecnol
 
 - Node
 - Express
-- Sequelize
 - JWT
 - MySQL
 - bcryptjs
@@ -23,6 +22,8 @@ $ git clone https://github.com/JoaopedroHolanda/projeto-clean-house.git
 
 # Install the dependencies
 $ npm install
+
+# Pegue o código SQL no arquivo sql.txt e rode no WorkBench
 
 # executar
 $ npm run dev
