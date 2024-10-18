@@ -19,7 +19,7 @@ class ContratoController {
         const {prestadorId, dataInicio, dataFim, observacao } = req.body
     
         try {
-            // Verifica se o prestador está disponível
+          
             const contrato = await contratoService.criarContrato(clienteId, prestadorId, dataInicio, dataFim, observacao);
             console.log('Prestador ID recebido:', prestadorId);
             res.status(201).json({ message: 'Contrato criado com sucesso.', contrato });

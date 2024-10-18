@@ -5,6 +5,6 @@ const router = Router()
 
 router
     .get("/eletricistas", PrestadorController.buscaPrestadoresEletricistas)
-
+    .get('/prestadores-disponiveis', PrestadorController.buscarPrestadoresDisponiveis)
 module.exports = router
 

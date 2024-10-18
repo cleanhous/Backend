@@ -41,7 +41,6 @@ class contratoService {
             const dataInicioFormatted = moment(dataInicio).format('YYYY-MM-DD HH:mm:ss');
             const dataFimFormatted = moment(dataFim).format('YYYY-MM-DD HH:mm:ss');
     
-            // Verifica se há sobreposição de datas para o prestador
             const [rows] = await db.query(`
                 SELECT data_inicio, data_fim 
                 FROM contratos 
