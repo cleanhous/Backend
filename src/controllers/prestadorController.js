@@ -12,9 +12,9 @@ class PrestadorController{
         }
     }
 
-    static async buscarPrestadoresDisponiveis(req, res) {
+    static async obterPrestadoresDisponiveis(req, res) {
         const { dataInicio, dataFim } = req.query
-    
+
         try {
             const prestadores = await prestadorService.obterPrestadoresDisponiveis(dataInicio, dataFim);
             res.status(200).json(prestadores);

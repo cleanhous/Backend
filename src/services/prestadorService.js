@@ -15,6 +15,7 @@ class PrestadorService{
 
     async obterPrestadoresDisponiveis(dataInicio, dataFim) {
         try {
+            console.log(dataInicio)
             console.log(dataFim)
             const dataInicioFormatted = moment(dataInicio).format('YYYY-MM-DD HH:mm:ss');
             const dataFimFormatted = moment(dataFim).format('YYYY-MM-DD HH:mm:ss'); 
