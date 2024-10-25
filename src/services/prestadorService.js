@@ -2,18 +2,20 @@ const db = require("../db/dbConnection")
 const moment = require('moment')
 
 class PrestadorService{
-    async buscaPrestadoresEletricistas(){
+    async buscaPrestadores(especialidade) {
+        const query = `
+            SELECT p.id, p.nome, p.nota, e.titulo, e.descricao, e.preco 
+            FROM prestadores p
+            INNER JOIN especialidades e ON e.id = p.especialidade_id
+            INNER JOIN servicos s ON s.id = e.servico_id 
+            WHERE s.titulo = ?
+        `;
         
-        const [rows] = await db.query(
-            `select p.id,p.nome,p.nota, e.titulo, e.descricao, e.preco from prestadores p
-            inner join especialidades e on e.id = p.especialidade_id
-            inner join servicos s on s.id = e.servico_id where s.titulo = "eletricista"`
-        )
-
-        return rows
+        const [rows] = await db.query(query, [especialidade]);
+        return rows;
     }
 
-    async obterPrestadoresDisponiveis(dataInicio, dataFim) {
+    async obterPrestadoresDisponiveis(dataInicio, dataFim, servico) {
         try {
             console.log(dataInicio)
             console.log(dataFim)
