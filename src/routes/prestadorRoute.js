@@ -4,7 +4,8 @@ const PrestadorController = require("../controllers/prestadorController")
 const router = Router()
 
 router
-    .get("/eletricistas", PrestadorController.buscaPrestadoresEletricistas)
-    .get('/prestadores-disponiveis', PrestadorController.obterPrestadoresDisponiveis)
+    .get('/prestadores-disponiveis/:servico', PrestadorController.obterPrestadoresDisponiveis)
+    .get("/:servico", PrestadorController.buscaPrestadores)
+
 module.exports = router
 

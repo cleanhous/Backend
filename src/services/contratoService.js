@@ -44,7 +44,7 @@ class contratoService {
             const [rows] = await db.query(`
                 SELECT data_inicio, data_fim 
                 FROM contratos 
-                WHERE id_prestador = ?
+                WHERE prestador_id = ?
                 AND (
                     (data_inicio <= ? AND data_fim >= ?) -- Se a nova data de início estiver dentro de outro contrato
                     OR
@@ -59,9 +59,9 @@ class contratoService {
             }
     
             const [result] = await db.query(`
-                INSERT INTO contratos (id, id_cliente, id_prestador, data_inicio, data_fim, observacao)
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [uuid.v4(), clienteId, prestadorId, dataInicioFormatted, dataFimFormatted, observacao]);
+                INSERT INTO contratos (cliente_id, prestador_id, data_inicio, data_fim, observacao)
+                VALUES ( ?, ?, ?, ?, ?)
+            `, [clienteId, prestadorId, dataInicioFormatted, dataFimFormatted, observacao]);
     
             return result;
     
@@ -75,8 +75,8 @@ class contratoService {
           const [result] = await db.query(`
             SELECT p.nome, c.data_inicio, c.data_fim, c.observacao 
             FROM contratos c
-            INNER JOIN prestadores p ON p.id = c.id_prestador
-            WHERE c.id_cliente = ?
+            INNER JOIN prestadores p ON p.id = c.prestador_id
+            WHERE c.cliente_id = ?
           `, [clienteId])
           return result
 

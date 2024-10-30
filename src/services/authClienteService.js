@@ -58,94 +58,47 @@ class AuthClienteService{
         }
 
         const senhaHash = await hash(dto.senha, 8);
+        const cliente_id = uuid.v4()
 
         const now = new Date();
 
             const [result] = await db.query(
                 `INSERT INTO clientes
-               (id, nome, email,cpf,senha,telefone, uf, cidade, logradouro, cep, numero, complemento, createdAt, updatedAt)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+               (id, nome, email,cpf,senha,createdAt, updatedAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?);
+                `,
                 [
-                    uuid.v4(),
+                    cliente_id,
                     dto.nome,
                     dto.email,
                     dto.cpf,
                     senhaHash,
-                    dto.telefone,
+                    now,
+                    now 
+                ]
+            )
+
+            const[resultEndereco] = await db.query(
+                `INSERT INTO enderecos_cliente(uf, cidade, logradouro, cep, numero, complemento, cliente_id) values(?,?,?,?,?,?,?)`,
+                [
                     dto.uf,
                     dto.cidade,
                     dto.logradouro,
                     dto.cep,
                     dto.numero,
                     dto.complemento,
-                    now,
-                    now 
+                    cliente_id
+                ]
+            )
+
+            const [resultTelefone] = await db.query(
+                `INSERT INTO telefones_cliente(telefone, cliente_id) values(?,?)`,
+                [
+                    dto.telefone,
+                    cliente_id
                 ]
             )
             return result
     }
-
-    async forgotPassword(email) {
-        // Verifique se o usuário existe
-        const [rows] = await db.query('SELECT id, email FROM clientes WHERE email = ?', [email]);
-        const cliente = rows[0];
-    
-        if (!cliente) {
-            throw new Error('Usuário não encontrado');
-        }
-    
-        // Gerar um token de redefinição de senha (válido por 1 hora)
-        const acessToken = sign({
-            id: cliente.id,
-            email: cliente.email
-        }, jsonSecret.secret, {
-            expiresIn: 3600 // 1 hora
-        });
-    
-        // Criar o link de redefinição de senha
-        const resetLink = `http://localhost:3000/reset-password?token=${acessToken}`;
-    
-        // Configurar o transportador do nodemailer para enviar email
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.office365.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.USER, // substitua pelo seu email
-                pass:process.env.PASS, // substitua pela sua senha
-            },
-        });
-    
-        // Enviar email para o usuário
-        await transporter.sendMail({
-            from: '"Clean House" <cleanhouseltda@hotmail.com>',
-            to: "joaopedrodesantanaholanda9@gmail.com",
-            subject: 'Redefinição de Senha',
-            text: `Olá, clique no link para redefinir sua senha: ${resetLink}`,
-        });
-    
-        return { message: 'Email de redefinição de senha enviado com sucesso!' };
-    }
-    async resetPassword(token, novaSenha) {
-        // Verificar se o token é válido
-        let decoded;
-        try {
-            decoded = jwt.verify(token, secret);
-        } catch (error) {
-            throw new Error('Token inválido ou expirado');
-        }
-
-        // Gerar o hash da nova senha
-        const senhaHash = await hash(novaSenha, 8);
-
-        // Atualizar a senha no banco de dados
-        await db.query(
-            'UPDATE clientes SET senha = ? WHERE id = ?',
-            [senhaHash, decoded.id]
-        );
-
-        return { message: 'Senha redefinida com sucesso!' };
-    }
 }
-
 module.exports = AuthClienteService
