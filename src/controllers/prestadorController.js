@@ -4,18 +4,23 @@ const prestadorService = new PrestadorService()
 
 class PrestadorController{
     static async buscaPrestadores(req, res) {
-        const { especialidade } = req.params;
+        const {servico} = req.params
+        
         try {
-            const listaPrestadores = await prestadorService.buscaPrestadores(especialidade);
+            const listaPrestadores = await prestadorService.buscaPrestadores(servico);
             res.status(200).send(listaPrestadores);
         } catch (error) {
             res.status(400).send({ message: error.message });
         }
     }
 
+    
+
 
     static async obterPrestadoresDisponiveis(req, res) {
-        const { dataInicio, dataFim, servico } = req.query
+        const {servico} = req.params
+
+        const { dataInicio, dataFim} = req.query
 
         try {
             const prestadores = await prestadorService.obterPrestadoresDisponiveis(dataInicio, dataFim, servico);
