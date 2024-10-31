@@ -4,36 +4,15 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema cleanhouse
--- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema cleanhouse
--- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS cleanhouse DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-USE cleanhouse ;
-
--- -----------------------------------------------------
--- Table cleanhouse.clientes
--- -----------------------------------------------------
+USE cleanhouse;
 CREATE TABLE IF NOT EXISTS cleanhouse.clientes (
   id CHAR(36) NOT NULL,
   nome VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   cpf VARCHAR(14) NOT NULL,
   senha VARCHAR(255) NOT NULL,
-  telefone VARCHAR(14) NOT NULL,
-  nota DECIMAL(3,2) NULL DEFAULT NULL,
-  UF VARCHAR(2) NULL DEFAULT NULL,
-  cidade VARCHAR(45) NULL DEFAULT NULL,
-  cep VARCHAR(9) NULL DEFAULT NULL,
-  logradouro VARCHAR(60) NULL DEFAULT NULL,
-  numero VARCHAR(10) NULL DEFAULT NULL,
-  complemento VARCHAR(30) NULL DEFAULT NULL,
+  nota DECIMAL(3,2)DEFAULT 5,
   createdAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id))
@@ -42,27 +21,8 @@ DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table cleanhouse.contratos
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS cleanhouse.contratos (
-  id CHAR(36) NOT NULL,
-  id_cliente CHAR(36) NULL DEFAULT NULL,
-  id_prestador CHAR(36) NULL DEFAULT NULL,
-  data_inicio DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  data_fim DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  observacao VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table cleanhouse.servicos
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS cleanhouse.servicos (
-  id CHAR(36) NOT NULL,
+  id int auto_increment NOT NULL,
   titulo VARCHAR(60) NULL DEFAULT NULL,
   PRIMARY KEY (id))
 ENGINE = InnoDB
@@ -70,28 +30,22 @@ DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table cleanhouse.especialidades
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS cleanhouse.especialidades (
-  id CHAR(36) NOT NULL,
+  id int auto_increment NOT NULL,
   titulo VARCHAR(60) NULL DEFAULT NULL,
   descricao VARCHAR(255) NULL DEFAULT NULL,
   preco DECIMAL(7,3) NULL DEFAULT NULL,
-  id_servico CHAR(36) NULL DEFAULT NULL,
+  servico_id int NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_id_servico (id_servico ASC) VISIBLE,
-  CONSTRAINT fk_id_servico
-    FOREIGN KEY (id_servico)
+  INDEX fk_servico_id (servico_id ASC) VISIBLE,
+  CONSTRAINT fk_servico_id
+    FOREIGN KEY (servico_id)
     REFERENCES cleanhouse.servicos (id))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
--- -----------------------------------------------------
--- Table cleanhouse.prestadores
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS cleanhouse.prestadores (
   id CHAR(36) NOT NULL,
   nome VARCHAR(255) NOT NULL,
@@ -99,34 +53,194 @@ CREATE TABLE IF NOT EXISTS cleanhouse.prestadores (
   cpf VARCHAR(14) NOT NULL,
   senha VARCHAR(255) NOT NULL,
   telefone VARCHAR(14) NOT NULL,
-  nota DECIMAL(3,2) NULL DEFAULT NULL,
-  UF VARCHAR(2) NULL DEFAULT NULL,
-  cidade VARCHAR(45) NULL DEFAULT NULL,
+  nota DECIMAL(3,2) NULL DEFAULT 5,
   createdAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  id_especialidade CHAR(36) NULL DEFAULT NULL,
+  especialidade_id int NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_id_especialidade (id_especialidade ASC) VISIBLE,
-  CONSTRAINT fk_id_especialidade
-    FOREIGN KEY (id_especialidade)
+  INDEX fk_especialidade_id (especialidade_id ASC) VISIBLE,
+  CONSTRAINT fk_especialidade_id
+    FOREIGN KEY (especialidade_id)
     REFERENCES cleanhouse.especialidades (id))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
-insert into servicos(id,titulo) values(UUID(), "eletricista");
 
- 
-insert into especialidades(id,titulo,descricao,preco,id_servico) values(UUID(),"Instalações elétricas residenciais", "Especialista em instalações elétricas residenciais", 300, (SELECT id FROM servicos WHERE titulo = 'eletricista')) ;
+CREATE TABLE IF NOT EXISTS cleanhouse.status (
+  id INT NOT NULL AUTO_INCREMENT,
+  descricao VARCHAR(45) NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB;
 
 
-INSERT INTO cleanhouse.prestadores 
-   (id, nome, email, cpf, senha, telefone, nota, UF, cidade, createdAt, updatedAt, id_especialidade) 
-VALUES 
-   (UUID(), 'Carlos Pereira', 'carlos.pereira@example.com', '321.654.987-00', 'senha789', '(11)99876-5432', 4.8, 'SP', 'São Paulo', NOW(), NOW(), (SELECT id FROM especialidades WHERE titulo = 'Instalações elétricas residenciais')),
-   (UUID(), 'Fernanda Santos', 'fernanda.santos@example.com', '654.123.987-00', 'senha012', '(11)96543-2109', 4.9, 'RJ', 'Rio de Janeiro', NOW(), NOW(), (SELECT id FROM especialidades WHERE titulo = 'Instalações elétricas residenciais'));
+CREATE TABLE IF NOT EXISTS cleanhouse.contratos (
+  id int auto_increment NOT NULL,
+  data_inicio DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  data_fim DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  observacao VARCHAR(255) NULL DEFAULT NULL,
+  cliente_id CHAR(36) NOT NULL,
+  prestador_id CHAR(36) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_contratos_clientes1_idx (cliente_id ASC) VISIBLE,
+  INDEX fk_contratos_prestadores1_idx (prestador_id ASC) VISIBLE,
+  CONSTRAINT fk_contratos_clientes1
+    FOREIGN KEY (cliente_id)
+    REFERENCES cleanhouse.clientes (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_contratos_prestadores1
+    FOREIGN KEY (prestador_id)
+    REFERENCES cleanhouse.prestadores (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
+
+
+CREATE TABLE IF NOT EXISTS cleanhouse.enderecos_cliente (
+  id INT NOT NULL AUTO_INCREMENT,
+  UF VARCHAR(2) NULL DEFAULT NULL,
+  cidade VARCHAR(45) NULL DEFAULT NULL,
+  cep VARCHAR(9) NULL DEFAULT NULL,
+  logradouro VARCHAR(60) NULL DEFAULT NULL,
+  numero VARCHAR(10) NULL DEFAULT NULL,
+  complemento VARCHAR(30) NULL DEFAULT NULL,
+  cliente_id CHAR(36) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_enderecos_cliente_clientes1_idx (cliente_id ASC) VISIBLE,
+  CONSTRAINT fk_enderecos_cliente_clientes1
+    FOREIGN KEY (cliente_id)
+    REFERENCES cleanhouse.clientes (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE IF NOT EXISTS cleanhouse.telefones_cliente (
+  id INT NOT NULL AUTO_INCREMENT,
+  telefone VARCHAR(16) NULL,
+  cliente_id CHAR(36) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_telefone_clientes1_idx (cliente_id ASC) VISIBLE,
+  CONSTRAINT fk_telefone_clientes1
+    FOREIGN KEY (cliente_id)
+    REFERENCES cleanhouse.clientes (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;   
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Arquivo de inserts
+INSERT INTO servicos (titulo) VALUES
+('eletricista'),
+('encanador'),
+('diarista'),
+('assistenciatecnica'),
+('pintor'),
+('chaveiro'),
+('empreiteiro'),
+('arquiteto'),
+('cozinheiro');
+
+-- Especialidades para Eletricista (servico_id = 1)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Instalação de Tomadas', 'Instalação de tomadas e interruptores', 150.00, 1),
+('Reparo de Fiação', 'Serviço de reparo e substituição de fiação elétrica', 200.00, 1);
+
+-- Especialidades para Encanador (servico_id = 2)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Desentupimento de Pia', 'Desentupimento de pias e ralos', 120.00, 2),
+('Instalação de Torneiras', 'Instalação de torneiras e sifões', 90.00, 2);
+
+-- Especialidades para Diarista (servico_id = 3)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Limpeza Residencial', 'Limpeza completa de residências', 180.00, 3),
+('Limpeza de Escritórios', 'Limpeza de salas comerciais e escritórios', 200.00, 3);
+
+-- Especialidades para Assistência Técnica (servico_id = 4)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Conserto de Geladeira', 'Reparo e manutenção de geladeiras', 300.00, 4),
+('Conserto de Máquina de Lavar', 'Serviço de conserto e manutenção de máquinas de lavar', 250.00, 4);
+
+-- Especialidades para Pintor (servico_id = 5)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Pintura de Paredes Internas', 'Pintura de ambientes internos', 500.00, 5),
+('Pintura Externa', 'Pintura de fachadas e áreas externas', 800.00, 5);
+
+-- Especialidades para Chaveiro (servico_id = 6)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Troca de Fechadura', 'Substituição de fechaduras e chaves', 150.00, 6),
+('Abertura de Portas', 'Abertura de portas em casos de perda de chave', 100.00, 6);
+
+-- Especialidades para Empreiteiro (servico_id = 7)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Reforma Completa', 'Reforma completa de imóveis', 5000.00, 7),
+('Construção de Muros', 'Construção de muros e divisórias', 1500.00, 7);
+
+-- Especialidades para Arquiteto (servico_id = 8)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Projeto Residencial', 'Desenvolvimento de projetos para residências', 2000.00, 8),
+('Projeto Comercial', 'Desenvolvimento de projetos para estabelecimentos comerciais', 2500.00, 8);
+
+-- Especialidades para Cozinheiro (servico_id = 9)
+INSERT INTO especialidades (titulo, descricao, preco, servico_id) VALUES
+('Buffet para Eventos', 'Preparação de buffet para eventos e festas', 1500.00, 9),
+('Chef em Casa', 'Serviço de chef particular para eventos menores', 1000.00, 9);
+
+
+-- Prestadores para Eletricista
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Carlos Silva', 'carlos.eletricista@example.com', '123.456.789-01', 'senha123', '(11)99999-0001', 1),
+(UUID(), 'Mariana Ferreira', 'mariana.eletricista@example.com', '123.456.789-02', 'senha123', '(11)99999-0002', 2);
+
+-- Prestadores para Encanador
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'João Santos', 'joao.encanador@example.com', '123.456.789-03', 'senha123', '(11)99999-0003', 3),
+(UUID(), 'Ana Mendes', 'ana.encanador@example.com', '123.456.789-04', 'senha123', '(11)99999-0004', 4);
+
+-- Prestadores para Diarista
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Roberta Costa', 'roberta.diarista@example.com', '123.456.789-05', 'senha123', '(11)99999-0005', 5),
+(UUID(), 'Cláudia Lima', 'claudia.diarista@example.com', '123.456.789-06', 'senha123', '(11)99999-0006', 6);
+
+-- Prestadores para Assistência Técnica
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Ricardo Moura', 'ricardo.assistencia@example.com', '123.456.789-07', 'senha123', '(11)99999-0007', 7),
+(UUID(), 'Larissa Souza', 'larissa.assistencia@example.com', '123.456.789-08', 'senha123', '(11)99999-0008', 8);
+
+-- Prestadores para Pintor
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Gabriel Rocha', 'gabriel.pintor@example.com', '123.456.789-09', 'senha123', '(11)99999-0009', 9),
+(UUID(), 'Beatriz Oliveira', 'beatriz.pintor@example.com', '123.456.789-10', 'senha123', '(11)99999-0010', 10);
+
+-- Prestadores para Chaveiro
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Fernando Martins', 'fernando.chaveiro@example.com', '123.456.789-11', 'senha123', '(11)99999-0011', 11),
+(UUID(), 'Paula Teixeira', 'paula.chaveiro@example.com', '123.456.789-12', 'senha123', '(11)99999-0012', 12);
+
+-- Prestadores para Empreiteiro
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Rodrigo Lima', 'rodrigo.empreiteiro@example.com', '123.456.789-13', 'senha123', '(11)99999-0013', 13),
+(UUID(), 'Vera Ramos', 'vera.empreiteiro@example.com', '123.456.789-14', 'senha123', '(11)99999-0014', 14);
+
+-- Prestadores para Arquiteto
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Helena Duarte', 'helena.arquiteto@example.com', '123.456.789-15', 'senha123', '(11)99999-0015', 15),
+(UUID(), 'Pedro Ramos', 'pedro.arquiteto@example.com', '123.456.789-16', 'senha123', '(11)99999-0016', 16);
+
+-- Prestadores para Cozinheiro
+INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id) VALUES
+(UUID(), 'Juliana Costa', 'juliana.cozinheiro@example.com', '123.456.789-17', 'senha123', '(11)99999-0017', 17),
+(UUID(), 'Bruno Almeida', 'bruno.cozinheiro@example.com', '123.456.789-18', 'senha123', '(11)99999-0018', 18);
