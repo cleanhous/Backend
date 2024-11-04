@@ -1,0 +1,137 @@
+create database cleanhouse;
+use cleanhouse;
+
+
+
+-- Criação das tabelas sem as chaves estrangeiras
+CREATE TABLE IF NOT EXISTS clientes (
+  id CHAR(36) NOT NULL,
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  cpf VARCHAR(14) NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  nota DECIMAL(3,2) DEFAULT 5,
+  createdAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS servicos (
+  id INT AUTO_INCREMENT NOT NULL,
+  titulo VARCHAR(60) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS especialidades (
+  id INT AUTO_INCREMENT NOT NULL,
+  titulo VARCHAR(60) DEFAULT NULL,
+  descricao VARCHAR(255) DEFAULT NULL,
+  preco DECIMAL(7,3) DEFAULT NULL,
+  servico_id INT DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS prestadores (
+  id CHAR(36) NOT NULL,
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  cpf VARCHAR(14) NOT NULL,
+  senha VARCHAR(255) NOT NULL,
+  telefone VARCHAR(14) NOT NULL,
+  nota DECIMAL(3,2) DEFAULT 5,
+  createdAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  especialidade_id INT DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS status (
+  id INT AUTO_INCREMENT NOT NULL,
+  descricao VARCHAR(45) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS contratos (
+  id INT AUTO_INCREMENT NOT NULL,
+  data_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
+  data_fim DATETIME DEFAULT CURRENT_TIMESTAMP,
+  observacao VARCHAR(255) DEFAULT NULL,
+  cliente_id CHAR(36) NOT NULL,
+  prestador_id CHAR(36) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS enderecos_cliente (
+  id INT AUTO_INCREMENT NOT NULL,
+  UF VARCHAR(2) DEFAULT NULL,
+  cidade VARCHAR(45) DEFAULT NULL,
+  cep VARCHAR(9) DEFAULT NULL,
+  logradouro VARCHAR(60) DEFAULT NULL,
+  numero VARCHAR(10) DEFAULT NULL,
+  complemento VARCHAR(30) DEFAULT NULL,
+  cliente_id CHAR(36) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS telefones_cliente (
+  id INT AUTO_INCREMENT NOT NULL,
+  telefone VARCHAR(16) DEFAULT NULL,
+  cliente_id CHAR(36) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+-- Adição das chaves estrangeiras usando ALTER TABLE
+ALTER TABLE especialidades
+  ADD CONSTRAINT fk_especialidades_servicos
+  FOREIGN KEY (servico_id)
+  REFERENCES servicos (id);
+
+ALTER TABLE prestadores
+  ADD CONSTRAINT fk_prestadores_especialidades
+  FOREIGN KEY (especialidade_id)
+  REFERENCES especialidades (id);
+
+ALTER TABLE contratos
+  ADD CONSTRAINT fk_contratos_clientes
+  FOREIGN KEY (cliente_id)
+  REFERENCES clientes (id)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE contratos
+  ADD CONSTRAINT fk_contratos_prestadores
+  FOREIGN KEY (prestador_id)
+  REFERENCES prestadores (id)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE enderecos_cliente
+  ADD CONSTRAINT fk_enderecos_cliente_clientes
+  FOREIGN KEY (cliente_id)
+  REFERENCES clientes (id)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE telefones_cliente
+  ADD CONSTRAINT fk_telefones_cliente_clientes
+  FOREIGN KEY (cliente_id)
+  REFERENCES clientes (id)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+
+
+
