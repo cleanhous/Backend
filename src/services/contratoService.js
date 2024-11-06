@@ -73,10 +73,10 @@ class contratoService {
     async buscaContratoClientes(clienteId) {
         try {
           const [result] = await db.query(`
-            SELECT p.nome, c.data_inicio, c.data_fim, c.observacao 
+            SELECT c.id, p.nome, c.data_inicio, c.data_fim, c.observacao 
             FROM contratos c
             INNER JOIN prestadores p ON p.id = c.prestador_id
-            WHERE c.cliente_id = ?
+            WHERE c.cliente_id = ? AND c.avaliado = 0
           `, [clienteId])
           return result
 
@@ -84,6 +84,18 @@ class contratoService {
           throw new Error(error.message);
         }
       }
+    
+      async avaliarContrato(contratoId, nota) {
+        try {
+            const [result] = await db.query(
+                `UPDATE contratos SET nota = ?, avaliado = 1 WHERE id = ?`,
+                [nota, contratoId]  
+            );
+            return result; 
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
 
 module.exports = contratoService;

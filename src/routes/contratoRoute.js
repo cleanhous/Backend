@@ -6,5 +6,5 @@ const ContratoController = require('../controllers/contratoController');
 router.get('/:prestadorId/datas-ocupadas', ContratoController.obterDatasOcupadas);
 router.post('/contrato', ContratoController.criarContrato);
 router.get("/contratos/cliente", ContratoController.buscaContratoClientes)
-
+router.put("/contratos/avaliar/:id", ContratoController.avaliarContrato);
 module.exports = router;

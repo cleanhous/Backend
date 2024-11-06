@@ -14,6 +14,9 @@ class ContratoController {
             res.status(500).json({ error: 'Erro ao buscar datas ocupadas.' });
         }
     }
+
+
+
     static async criarContrato(req, res) {
         const clienteId = req.usuarioId;
         const {prestadorId, dataInicio, dataFim, observacao } = req.body
@@ -32,12 +35,24 @@ class ContratoController {
         const clienteId = req.usuarioId
 
         try {
+            console.log(clienteId)
           const listaDeContratos = await contratoService.buscaContratoClientes(clienteId);
           res.status(200).send(listaDeContratos);
         } catch (error) {
           res.status(400).json({ error: error.message });
         }
       }
+
+    static async avaliarContrato(req,res){
+        const {id} = req.params
+        const {estrelas} = req.body
+        try{
+            await contratoService.avaliarContrato(id,estrelas)
+        res.status(200).send({message: "Contrato avaliado com sucesso"})
+        }catch(error){
+            res.status(400).send(error)
+        }
+    }
 }
 
 module.exports = ContratoController;

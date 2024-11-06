@@ -37,9 +37,6 @@ class PrestadorController{
         }
     }
 
-    
-
-
     static async obterPrestadoresDisponiveis(req, res) {
         const {servico} = req.params
 

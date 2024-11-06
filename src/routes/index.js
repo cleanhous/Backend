@@ -4,8 +4,8 @@ const servico = require('./servicoRoute')
 const autenticado = require('../middleware/autenticado')
 const cliente = require("../routes/clienteRoute")
 const prestador = require("./prestadorRoute")
-const contrato = require("./contratoRouter")
-
+const contrato = require("./contratoRoute")
+const endereco = require("./enderecoRoute")
 module.exports = app => {
     app.use(
       bodyParser.json(),
@@ -14,6 +14,7 @@ module.exports = app => {
       autenticado,
       servico,
       cliente,
-      contrato
+      contrato, 
+      endereco
     )
   }
