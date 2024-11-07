@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "db:create": "node src/db/createDB.js"
+    "db:create": "node src/db/createDB.js",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
