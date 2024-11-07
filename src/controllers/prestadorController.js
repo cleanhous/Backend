@@ -11,6 +11,7 @@ class PrestadorController{
             const response = await prestadorService.createPrestador({ nome, email, cpf, senha, telefone, nota, especialidade_id });
             res.status(201).send(response);
         } catch (error) {
+            console.error('erro ao cadastra prestador, verifique classe prestador de controller.')
             res.status(400).send({ message: error.message });
         }
 
@@ -21,6 +22,27 @@ class PrestadorController{
         try {
             const prestadores = await prestadorService.getAllPrestadores();
             res.status(200).send(prestadores);
+        } catch (error) {
+            res.status(400).send({ message: error.message });
+        }
+    }
+    static async deletePrestador(req, res) {
+        const { id } = req.params;
+
+        try {
+            const response = await prestadorService.deletePrestador(id);
+            res.status(200).send(response);
+        } catch (error) {
+            res.status(400).send({ message: error.message });
+        }
+    }
+    static async updatePrestador(req, res) {
+        const { id } = req.params;
+        const { email, telefone, especialidade_id } = req.body;
+
+        try {
+            const response = await prestadorService.updatePrestador(id, { email, telefone, especialidade_id });
+            res.status(200).send(response);
         } catch (error) {
             res.status(400).send({ message: error.message });
         }
