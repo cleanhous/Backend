@@ -1,16 +1,12 @@
 create database cleanhouse;
 use cleanhouse;
 
-
-
--- Criação das tabelas sem as chaves estrangeiras
 CREATE TABLE IF NOT EXISTS clientes (
   id CHAR(36) NOT NULL,
   nome VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   cpf VARCHAR(14) NOT NULL,
   senha VARCHAR(255) NOT NULL,
-  nota DECIMAL(3,2) DEFAULT 5,
   createdAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
   updatedAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
@@ -66,6 +62,8 @@ CREATE TABLE IF NOT EXISTS contratos (
   observacao VARCHAR(255) DEFAULT NULL,
   cliente_id CHAR(36) NOT NULL,
   prestador_id CHAR(36) NOT NULL,
+  nota int NULL DEFAULT 5,
+  avaliado tinyint DEFAULT 0,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
