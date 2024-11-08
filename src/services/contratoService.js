@@ -45,6 +45,7 @@ class contratoService {
                 SELECT data_inicio, data_fim 
                 FROM contratos 
                 WHERE prestador_id = ?
+                AND avaliado = 0
                 AND (
                     (data_inicio <= ? AND data_fim >= ?) -- Se a nova data de início estiver dentro de outro contrato
                     OR
@@ -85,17 +86,29 @@ class contratoService {
         }
       }
     
-      async avaliarContrato(contratoId, nota) {
+      async avaliarContrato(contratoId, nota) { 
         try {
-            const [result] = await db.query(
+            await db.query(
                 `UPDATE contratos SET nota = ?, avaliado = 1 WHERE id = ?`,
                 [nota, contratoId]  
+            )
+            const [rows] = await db.query(
+                `SELECT prestador_id FROM contratos WHERE id = ?`, [contratoId]
             );
-            return result; 
+            const idPrestador = rows[0].prestador_id;
+    
+         
+            const [[{ mediaNota }]] = await db.query(`
+                SELECT AVG(nota) AS mediaNota FROM contratos WHERE prestador_id = ?
+            `, [idPrestador]);
+    
+            await db.query(`UPDATE prestadores SET nota = ? WHERE id = ?`, [mediaNota, idPrestador]);
+            
         } catch (error) {
-            throw new Error(error.message);
+            throw new Error(`Erro ao avaliar contrato: ${error.message}`);
         }
     }
+    
 }
 
 module.exports = contratoService;
