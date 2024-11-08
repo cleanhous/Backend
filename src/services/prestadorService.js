@@ -4,16 +4,16 @@ const { v4: uuidv4 } = require('uuid');
 
 class PrestadorService{
 
-    async createPrestador({nome, email, cpf, senha, telefone, nota, especialidade_id }) {
-        
+    async createPrestador({nome, email, cpf, senha, telefone, especialidade_id }) {
+
         const id = uuidv4();
         const query = `
-            INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, nota, especialidade_id, createdAt, updatedAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         `;
 
         try {
-            await db.query(query, [id, nome, email, cpf, senha, telefone, nota, especialidade_id]);
+            await db.query(query, [id, nome, email, cpf, senha, telefone, especialidade_id]);
             return { message: "Prestador criado com sucesso" };
         } catch (error) {
             throw new Error("Erro ao inserir um novo prestador 00 : " + error.message);

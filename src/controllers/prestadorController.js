@@ -5,10 +5,10 @@ const prestadorService = new PrestadorService()
 class PrestadorController{
 
     static async createPrestador(req, res) {
-        const { nome, email, cpf, senha, telefone, nota, especialidade_id } = req.body;
+        const { nome, email, cpf, senha, telefone, especialidade_id } = req.body;
         
         try {
-            const response = await prestadorService.createPrestador({ nome, email, cpf, senha, telefone, nota, especialidade_id });
+            const response = await prestadorService.createPrestador({ nome, email, cpf, senha, telefone, especialidade_id });
             res.status(201).send(response);
         } catch (error) {
             console.error('erro ao cadastra prestador, verifique classe prestador de controller.')
