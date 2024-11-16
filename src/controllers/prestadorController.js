@@ -71,6 +71,15 @@ class PrestadorController{
             res.status(500).json({ error: error.message });
         }
     }
+    static async getPrestadorSchedule(req, res) {
+        const { id } = req.params;
+        try {
+            const schedule = await prestadorService.getPrestadorSchedule(id);
+            res.status(200).send(schedule);
+        } catch (error) {
+            res.status(400).send({ message: error.message });
+        }
+    }
     
 }
    

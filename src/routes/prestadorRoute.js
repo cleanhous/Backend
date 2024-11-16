@@ -5,6 +5,7 @@ const router = Router()
 
 
 router
+    .get('/prestadores/:id/schedule', PrestadorController.getPrestadorSchedule)
     .get('/prestadores-disponiveis/:servico', PrestadorController.obterPrestadoresDisponiveis)
     .get('/prestadores', PrestadorController.getAllPrestador) 
     .get('/:servico', PrestadorController.buscaPrestadores)

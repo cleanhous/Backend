@@ -131,6 +131,19 @@ class PrestadorService{
             throw new Error(error);
         }
     }
+    async getPrestadorSchedule(prestadorId) {
+        const query = `
+            SELECT data_inicio, data_fim
+            FROM contratos
+            WHERE prestador_id = ?
+        `;
+        try {
+            const [rows] = await db.query(query, [prestadorId]);
+            return rows;
+        } catch (error) {
+            throw new Error('Erro ao buscar agenda do prestador: ' + error.message);
+        }
+    }
 
 }
 
