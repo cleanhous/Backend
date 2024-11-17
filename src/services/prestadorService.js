@@ -85,7 +85,7 @@ class PrestadorService{
 
     async buscaPrestadores(servico) {
         const query = `
-            SELECT p.id, p.nome, p.nota, e.titulo, e.descricao, e.preco 
+            SELECT p.id, p.nome, p.telefone, p.nota, e.titulo, e.descricao, e.preco 
             FROM prestadores p
             INNER JOIN especialidades e ON e.id = p.especialidade_id
             INNER JOIN servicos s ON s.id = e.servico_id 
