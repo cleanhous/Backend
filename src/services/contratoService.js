@@ -73,23 +73,22 @@ class contratoService {
     
     async buscaContratoClientes(clienteId) {
         try {
-          const [result] = await db.query(`
-            SELECT c.id, p.nome, c.data_inicio, c.data_fim, c.observacao 
-            FROM contratos c
-            INNER JOIN prestadores p ON p.id = c.prestador_id
-            WHERE c.cliente_id = ? AND c.avaliado = 0
-          `, [clienteId])
-          return result
-
+            const [result] = await db.query(`
+                SELECT c.id, p.nome, c.data_inicio, c.data_fim, c.observacao, c.avaliado, c.nota
+                FROM contratos c
+                INNER JOIN prestadores p ON p.id = c.prestador_id
+                WHERE c.cliente_id = ?
+            `, [clienteId]);
+            return result;
         } catch (error) {
-          throw new Error(error.message);
+            throw new Error(error.message);
         }
-      }
+    }    
     
       async avaliarContrato(contratoId, nota) { 
         try {
             await db.query(
-                `UPDATE contratos SET nota = ?, avaliado = 1 WHERE id = ?`,
+                `UPDATE contratos SET nota = ?, avaliado = 1, status_id = 2 WHERE id = ?`,
                 [nota, contratoId]  
             )
             const [rows] = await db.query(
