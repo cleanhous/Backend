@@ -10,7 +10,7 @@ require('dotenv').config()
 class AuthAdminService{
     async login(dto) {
         const [rows] = await db.query(
-            'SELECT id, codigo, senha FROM admins WHERE codigo = ?',
+            'SELECT id, codigo, email, senha FROM admins WHERE codigo = ?',
             [dto.codigo]
         )
         const admin = rows[0];
@@ -27,7 +27,8 @@ class AuthAdminService{
 
         const acessToken = sign({
             id: admin.id,
-            email: admin.codigo
+            email: admin.email,
+            codigo: admin.codigo
         },jsonSecret.secret, {
             expiresIn: 86400
         })
