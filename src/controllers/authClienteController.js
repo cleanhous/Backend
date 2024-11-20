@@ -18,9 +18,9 @@ class AuthClienteController{
     }
 
     static async cadastrar(req,res){
-        const {nome,email,cpf,senha,telefone,uf,cidade,logradouro,cep,numero,complemento} = req.body
+        const {nome,email,cpf,senha,telefone,uf,cidade,bairro,logradouro,cep,numero,complemento} = req.body
         try{
-            const cliente = await authClienteService.cadastrar({nome,email,cpf,senha,telefone,uf,cidade,logradouro,cep,numero,complemento})
+            const cliente = await authClienteService.cadastrar({nome,email,cpf,senha,telefone,uf,cidade,bairro,logradouro,cep,numero,complemento})
             res.status(201).send(cliente)
         }catch (error) {
             res.status(400).send({message: error.message})

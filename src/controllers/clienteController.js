@@ -1,5 +1,4 @@
 const ClienteService = require("../services/clienteService")
-
 const clienteService = new ClienteService()
 
 class ClienteController{
@@ -11,8 +10,7 @@ class ClienteController{
         }catch(error){
             res.status(400).send({error: error.message})
         }
-    }
-    
+    } 
     static async atualizarCliente(req,res){
         const id = req.usuarioId
         const dadosAtualizados = req.body

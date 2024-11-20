@@ -79,10 +79,11 @@ class AuthClienteService{
             )
 
             const[resultEndereco] = await db.query(
-                `INSERT INTO enderecos_cliente(uf, cidade, logradouro, cep, numero, complemento, cliente_id) values(?,?,?,?,?,?,?)`,
+                `INSERT INTO enderecos_cliente(uf, cidade,bairro, logradouro, cep, numero, complemento, cliente_id) values(?,?,?,?,?,?,?,?)`,
                 [
                     dto.uf,
                     dto.cidade,
+                    dto.bairro,
                     dto.logradouro,
                     dto.cep,
                     dto.numero,

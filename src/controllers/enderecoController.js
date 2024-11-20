@@ -5,7 +5,6 @@ const enderecoService = new EnderecoService()
 class EnderecoController{
     static async buscaEnderecoCliente(req, res){
         const clienteId = req.usuarioId
-        
         try{
             console.log(clienteId)
             const listaEnderecos = await enderecoService.buscaEnderecoCliente(clienteId)
