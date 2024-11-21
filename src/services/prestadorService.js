@@ -135,7 +135,7 @@ class PrestadorService{
         const query = `
             SELECT data_inicio, data_fim
             FROM contratos
-            WHERE prestador_id = ?
+            WHERE prestador_id = ? AND avaliado = 0
         `;
         try {
             const [rows] = await db.query(query, [prestadorId]);
