@@ -74,7 +74,7 @@ class contratoService {
     async buscaContratoClientes(clienteId) {
         try {
             const [result] = await db.query(`
-                SELECT c.id, p.nome, c.data_inicio, c.data_fim, c.observacao, c.avaliado, c.nota
+                SELECT c.id, p.nome, c.data_inicio, c.data_fim, c.observacao, c.avaliado, c.nota, c.status_id
                 FROM contratos c
                 INNER JOIN prestadores p ON p.id = c.prestador_id
                 WHERE c.cliente_id = ?
@@ -84,6 +84,19 @@ class contratoService {
             throw new Error(error.message);
         }
     }    
+
+    async cancelarContrato(contratoId) {
+        try {
+           
+            await db.query(
+                `UPDATE contratos SET status_id = 3 WHERE id = ?`,
+                [contratoId]
+            );
+        } catch (error) {
+            throw new Error(`Erro ao cancelar contrato: ${error.message}`);
+        }
+    }
+    
     
       async avaliarContrato(contratoId, nota) { 
         try {

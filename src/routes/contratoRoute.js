@@ -7,4 +7,6 @@ router.get('/:prestadorId/datas-ocupadas', ContratoController.obterDatasOcupadas
 router.post('/contrato', ContratoController.criarContrato);
 router.get("/contratos/cliente", ContratoController.buscaContratoClientes)
 router.put("/contratos/avaliar/:id", ContratoController.avaliarContrato);
+router.put("/contratos/cancelar/:id", ContratoController.cancelarContrato);
+
 module.exports = router;

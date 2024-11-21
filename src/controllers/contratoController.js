@@ -53,6 +53,18 @@ class ContratoController {
             res.status(400).send(error)
         }
     }
+
+    static async cancelarContrato(req, res) {
+        const { id } = req.params;
+    
+        try {
+            await contratoService.cancelarContrato(id);
+            res.status(200).json({ message: "Contrato cancelado com sucesso." });
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+    
 }
 
 module.exports = ContratoController;
