@@ -21,36 +21,65 @@ class ClienteService{
         return cliente
     }
 
-    async atualizaCliente(id, dadosAtualizados){
+    async atualizaCliente(id, dadosAtualizados) {
         const [rows] = await db.query(
-            "SELECT * FROM clientes WHERE id = ?",[id]
-        )
-
-        const cliente = rows[0]
-
-        if(!cliente){
-            throw new Error("Cliente não cadastrado")
+            "SELECT * FROM clientes WHERE id = ?", [id]
+        );
+    
+        const cliente = rows[0];
+    
+        if (!cliente) {
+            throw new Error("Cliente não cadastrado");
         }
-
-        const {email,senha, telefone, cep, uf, cidade, logradouro,numero, complemento} = dadosAtualizados
-
-        const senhaHash = await hash(senha,8)
-
-        const atualizaEndereco = await db.query(
-            `UPDADE enderecos_cliente SET cep=?, uf=?, cidade=?, logradouro=?, numero=?,complemento=? WHERE cliente_id = ?`,
-            [cep||cliente.cep, uf||cliente.uf, cidade||cliente.cidade, logradouro||cliente.logradouro,numero|| cliente.numero,complemento||cliente.complemento, id]
-        )
+    
+        const {
+            email,
+            senha,
+            telefone,
+            cep,
+            uf,
+            cidade,
+            logradouro,
+            numero,
+            complemento
+        } = dadosAtualizados;
+    
         
-        const atualizaTelefone = await db.query(
-            `UPDATE telefones_cliente SET telefone = ? WHERE cliente_id = ?`,
-            [ telefone || cliente.telefone, id]
-        )
-
+        const senhaHash = senha ? await hash(senha, 8) : cliente.senha;
+    
+        
+        await db.query(
+            `UPDATE enderecos_cliente 
+            SET cep = ?, uf = ?, cidade = ?, logradouro = ?, numero = ?, complemento = ? 
+            WHERE cliente_id = ?`,
+            [
+                cep || cliente.cep,
+                uf || cliente.uf,
+                cidade || cliente.cidade,
+                logradouro || cliente.logradouro,
+                numero || cliente.numero,
+                complemento || cliente.complemento,
+                id
+            ]
+        );
+    
+        // Atualiza os dados do telefone
+        await db.query(
+            `UPDATE telefones_cliente 
+            SET telefone = ? 
+            WHERE cliente_id = ?`,
+            [telefone || cliente.telefone, id]
+        );
+    
+       
         const clienteAtualizado = await db.query(
-            `UPDATE clientes SET email = ?, senha =?, updatedAt = NOW() WHERE id = ?`,
-            [email || cliente.email,senhaHash||cliente.senha, id]
-        )
-        return clienteAtualizado
+            `UPDATE clientes 
+            SET email = ?, senha = ?, updatedAt = NOW() 
+            WHERE id = ?`,
+            [email || cliente.email, senhaHash, id]
+        );
+    
+        return clienteAtualizado;
     }
 }
 
