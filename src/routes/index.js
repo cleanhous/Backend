@@ -12,11 +12,14 @@ module.exports = app => {
       bodyParser.json(),
       authCliente,
       authAdmin,
+      cliente,
+      endereco,
       prestador,
       autenticado,
       servico,
-      cliente,
       contrato, 
-      endereco
+     
     )
   }
+
+  

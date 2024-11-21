@@ -1,9 +1,14 @@
+const {verify, decode} = require('jsonwebtoken')
+const jsonSecret = require('../config/jsonSecret')
 const ClienteService = require("../services/clienteService")
 const clienteService = new ClienteService()
 
 class ClienteController{
     static async buscaClientePorId(req,res){
-        const id = req.usuarioId 
+        const token = req.headers.authorization
+        const [, acessToken] = token.split(' ')
+        verify(acessToken, jsonSecret.secret)
+        const {id} = await decode(acessToken)
         try{
            const usuario = await clienteService.buscaClientePorId(id)
             res.status(200).json(usuario)
@@ -12,7 +17,10 @@ class ClienteController{
         }
     } 
     static async atualizarCliente(req,res){
-        const id = req.usuarioId
+        const token = req.headers.authorization
+        const [, acessToken] = token.split(' ')
+        verify(acessToken, jsonSecret.secret)
+        const {id} = await decode(acessToken)
         const dadosAtualizados = req.body
 
         try{
