@@ -46,6 +46,7 @@ class contratoService {
                 FROM contratos 
                 WHERE prestador_id = ?
                 AND avaliado = 0
+                AND status_id = 1
                 AND (
                     (data_inicio <= ? AND data_fim >= ?) -- Se a nova data de início estiver dentro de outro contrato
                     OR
