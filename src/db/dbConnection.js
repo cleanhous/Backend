@@ -2,11 +2,11 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 const pool = mysql.createPool({
-  host: "autorack.proxy.rlwy.net",
+  host: "mysql.railway.internal",
   user: "root",
-  password: "PpmRJzMaikwNaTWubaeLfAYraBxlFCie",
+  password: "fkHmkhldgEmTYBISBTKkxXrHAdMOnBAH",
   database: "cleanhouse",
-  port: 57302,
+  port: 3306,
   timezone: 'Z'
 });
 
