@@ -1,24 +1,23 @@
-const db = require("../db/dbConnection")
-const moment = require('moment')
+const db = require("../db/dbConnection");
+const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
 
-class PrestadorService{
-
-    async createPrestador({nome, email, cpf, senha, telefone, especialidade_id }) {
-
+class PrestadorService {
+    async createPrestador({ nome, email, cpf, senha, telefone, especialidades_id }) {
         const id = uuidv4();
         const query = `
-            INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidade_id, createdAt, updatedAt)
+            INSERT INTO prestadores (id, nome, email, cpf, senha, telefone, especialidades_id, createdAt, updatedAt)
             VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         `;
 
         try {
-            await db.query(query, [id, nome, email, cpf, senha, telefone, especialidade_id]);
+            await db.query(query, [id, nome, email, cpf, senha, telefone, especialidades_id]);
             return { message: "Prestador criado com sucesso" };
         } catch (error) {
-            throw new Error("Erro ao inserir um novo prestador 00 : " + error.message);
+            throw new Error("Erro ao inserir um novo prestador: " + error.message);
         }
     }
+
     async deletePrestador(id) {
         const query = `DELETE FROM prestadores WHERE id = ?`;
 
@@ -35,41 +34,42 @@ class PrestadorService{
         }
     }
 
-    async  getAllPrestadores() {
-        const query = 
-            `SELECT 
-            p.id AS prestador_id,
-            p.nome AS prestador_nome,
-            p.email AS prestador_email,
-            p.telefone AS prestador_telefone,
-            p.nota AS prestador_nota,
-            e.id AS especialidade_id,
-            e.titulo AS especialidade_titulo,
-            e.descricao AS especialidade_descricao,
-            e.preco AS especialidade_preco,
-            s.id AS servico_id,
-            s.titulo AS servico_titulo
-        FROM prestadores p
-        JOIN especialidades e ON e.id = p.especialidade_id
-        JOIN servicos s ON s.id = e.servico_id
-    `;
-    
+    async getAllPrestadores() {
+        const query = `
+            SELECT 
+                p.id AS prestador_id,
+                p.nome AS prestador_nome,
+                p.email AS prestador_email,
+                p.telefone AS prestador_telefone,
+                p.nota AS prestador_nota,
+                e.id AS especialidade_id,
+                e.titulo AS especialidade_titulo,
+                e.descricao AS especialidade_descricao,
+                e.preco AS especialidade_preco,
+                s.id AS servico_id,
+                s.titulo AS servico_titulo
+            FROM prestadores p
+            JOIN especialidades e ON e.id = p.especialidades_id
+            JOIN servicos s ON s.id = e.servicos_id
+        `;
+        
         try {
             const [rows] = await db.query(query);
             return rows;
-          } catch (error) {
+        } catch (error) {
             throw new Error("Erro ao buscar todos prestadores: " + error.message);
-          }
+        }
     }
-    async updatePrestador(id, { email, telefone, especialidade_id }) {
+
+    async updatePrestador(id, { email, telefone, especialidades_id }) {
         const query = `
             UPDATE prestadores
-            SET email = ?, telefone = ?, especialidade_id = ?, updatedAt = CURRENT_TIMESTAMP
+            SET email = ?, telefone = ?, especialidades_id = ?, updatedAt = CURRENT_TIMESTAMP
             WHERE id = ?
         `;
 
         try {
-            const [result] = await db.query(query, [email, telefone, especialidade_id, id]);
+            const [result] = await db.query(query, [email, telefone, especialidades_id, id]);
 
             if (result.affectedRows === 0) {
                 throw new Error("Prestador não encontrado");
@@ -81,14 +81,12 @@ class PrestadorService{
         }
     }
 
-
-
     async buscaPrestadores(servico) {
         const query = `
             SELECT p.id, p.nome, p.telefone, p.nota, e.titulo, e.descricao, e.preco 
             FROM prestadores p
             INNER JOIN especialidades e ON e.id = p.especialidades_id
-            INNER JOIN servicos s ON s.id = e.id 
+            INNER JOIN servicos s ON s.id = e.servicos_id
             WHERE s.titulo = ?
         `;
         
@@ -98,16 +96,16 @@ class PrestadorService{
 
     async obterPrestadoresDisponiveis(dataInicio, dataFim, servico) {
         try {
-            console.log(dataInicio)
-            console.log(dataFim)
+            console.log(dataInicio);
+            console.log(dataFim);
             const dataInicioFormatted = moment(dataInicio).format('YYYY-MM-DD HH:mm:ss');
             const dataFimFormatted = moment(dataFim).format('YYYY-MM-DD HH:mm:ss'); 
-    
+        
             const [rows] = await db.query(`
                 SELECT p.id, p.nome, p.nota, e.titulo, e.descricao, e.preco
                 FROM prestadores p
-                INNER JOIN especialidades e ON e.id = p.especialidade_id
-                INNER JOIN servicos s ON s.id = e.servico_id
+                INNER JOIN especialidades e ON e.id = p.especialidades_id
+                INNER JOIN servicos s ON s.id = e.servicos_id
                 WHERE s.titulo = ?
                 AND NOT EXISTS (
                     SELECT 1 
@@ -120,17 +118,17 @@ class PrestadorService{
                         OR
                         (? <= c.data_inicio AND ? >= c.data_fim)
                     )
-                );
-
+                )
             `, [
-            servico,dataInicioFormatted, dataInicioFormatted,dataFimFormatted, dataFimFormatted, dataInicioFormatted, dataFimFormatted
+                servico, dataFimFormatted, dataInicioFormatted, dataFimFormatted, dataInicioFormatted, dataInicioFormatted, dataFimFormatted
             ]);
-    
+        
             return rows;
         } catch (error) {
             throw new Error(error);
         }
     }
+
     async getPrestadorSchedule(prestadorId) {
         const query = `
             SELECT data_inicio, data_fim
@@ -146,7 +144,6 @@ class PrestadorService{
             throw new Error('Erro ao buscar agenda do prestador: ' + error.message);
         }
     }
-
 }
 
-module.exports = PrestadorService
+module.exports = PrestadorService;
