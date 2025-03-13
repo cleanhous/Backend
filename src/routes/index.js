@@ -11,13 +11,13 @@ const buscaContratos = require("./buscaContratosRoute")
 module.exports = app => {
     app.use(
       bodyParser.json(),
+      cliente,
       authCliente,
       authAdmin,
       buscaContratos,
       prestador,
       autenticado,
       servico,
-      cliente,
       contrato, 
       endereco
     )
