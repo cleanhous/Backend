@@ -16,7 +16,7 @@ class AuthClienteService{
         const cliente = rows[0];
 
         if (!cliente) {
-            throw new Error('Usuário não cadastrado');
+            throw new Error('Usuário ou senha inválido');
         }
 
         const senhasIguais = await compare(dto.senha, cliente.senha);
